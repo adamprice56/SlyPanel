@@ -167,7 +167,7 @@ public class MainActivity extends Activity
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
-         * fragment.
+           fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
