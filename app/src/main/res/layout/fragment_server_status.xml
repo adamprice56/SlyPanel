@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/Server_Status_Fragment"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="CPU Usage: "
+            android:id="@+id/cpuUsageLabel"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="RAM Usage: "
+            android:id="@+id/ramUsageLabel"
+            android:layout_toEndOf="@+id/tempLabel"
+            android:layout_below="@+id/cpuUsageBar"
+            android:layout_alignLeft="@+id/cpuUsageBar"
+            android:layout_alignStart="@+id/cpuUsageBar"
+            android:layout_marginTop="45dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Temperature"
+            android:id="@+id/tempLabel"
+            android:layout_below="@+id/ramUsageBar"
+            android:layout_alignRight="@+id/cpuUsageLabel"
+            android:layout_alignEnd="@+id/cpuUsageLabel"
+            android:layout_marginTop="52dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:id="@+id/cpuUsageBar"
+            android:max="100"
+            android:progress="25"
+            android:indeterminate="false"
+            android:layout_marginTop="40dp"
+            android:layout_below="@+id/cpuUsageLabel"
+            android:layout_alignLeft="@+id/cpuUsageLabel"
+            android:layout_alignStart="@+id/cpuUsageLabel" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:id="@+id/ramUsageBar"
+            android:max="100"
+            android:progress="45"
+            android:indeterminate="false"
+            android:layout_toEndOf="@+id/tempBar"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/ramUsageLabel"
+            android:layout_alignStart="@+id/ramUsageLabel" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:id="@+id/tempBar"
+            android:max="100"
+            android:progress="60"
+            android:indeterminate="false"
+            android:layout_marginTop="65dp"
+            android:layout_below="@+id/tempLabel"
+            android:layout_alignLeft="@+id/tempLabel"
+            android:layout_alignStart="@+id/tempLabel" />
+
+    </RelativeLayout>
+</LinearLayout>
