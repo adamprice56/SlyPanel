@@ -17,12 +17,21 @@ import com.jcraft.jsch.Session;
  */
 public class sshConnection extends Activity{
 
-    getSettingsFromUser settingsManager = new getSettingsFromUser();
 
     //SSH Command for cpu percentage top -b -n2 | grep "Cpu(s)" | awk '{print $2 + $4}'
     //Get the second line of this for true cpu percentage
     //Takes about 3-4 seconds to get it so refresh at ~5 seconds
 
+    EditText commandBox = (EditText) findViewById(R.id.commandBox);
+    EditText usernameBox = (EditText) findViewById(R.id.usernameBox);
+    EditText passwordBox = (EditText) findViewById(R.id.passwordBox);
+    EditText ipAddressBox = (EditText) findViewById(R.id.ipAddressBox);
+    TextView statusBarText = (TextView) findViewById(R.id.statusBarText);
+
+    String username;
+    String password;
+    String host;
+    int port = 22;
 
     Session sshSession;
     String statusMessage;
@@ -36,10 +45,6 @@ public class sshConnection extends Activity{
         public void run() {
 
             try {
-                String username = settingsManager.username;
-                String host = settingsManager.host;
-                int port = 22;
-                String password = settingsManager.password;
 
                 sshSession = sshManager.getSession(username, host, port);
                 sshSession.setPassword(password);
@@ -94,5 +99,27 @@ public class sshConnection extends Activity{
             }
         }
     });
+
+
+
+
+    void getSettings() {
+
+        username = usernameBox.toString();
+        password = passwordBox.toString();
+        host = ipAddressBox.toString();
+        statusBarText.setText("Ready to connect to: " + host);
+
+    }
+
+    void sendCommand() {
+        sshConnection sshConnect = new sshConnection();
+
+        sshConnect.command = commandBox.toString();
+        statusBarText.setText("Command ready to be sent to: " + host);
+        sshConnect.sshCommand.start();
+        statusBarText.setText("\"" + command + "\"" + "was sent to " + host);
+
+    }
 
 }

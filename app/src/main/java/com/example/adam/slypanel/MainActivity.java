@@ -49,10 +49,6 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
     private int selectedOption;
 
-
-//    ScheduledExecutorService scheduleExecutor = Executors.newScheduledThreadPool(1);
-//    getSettingsFromUser settingsManager = new getSettingsFromUser();
-//    sshConnection sshConnect = new sshConnection();
     refreshFragments refresh = new refreshFragments();
 
 
