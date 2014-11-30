@@ -219,6 +219,11 @@ public class MainActivity extends Activity
         }
     }
 
+    EditText commandBox = (EditText) findViewById(R.id.commandBox);
+    EditText usernameBox = (EditText) findViewById(R.id.usernameBox);
+    EditText passwordBox = (EditText) findViewById(R.id.passwordBox);
+    EditText ipAddressBox = (EditText) findViewById(R.id.ipAddressBox);
+    TextView statusBarText = (TextView) findViewById(R.id.statusBarText);
 
 
 

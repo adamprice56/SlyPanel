@@ -15,8 +15,7 @@ import com.jcraft.jsch.Session;
 /**
  * Created by adam on 26/11/14.
  */
-public class sshConnection extends Activity{
-
+public class sshConnection extends Activity {
 
     //SSH Command for cpu percentage top -b -n2 | grep "Cpu(s)" | awk '{print $2 + $4}'
     //Get the second line of this for true cpu percentage
