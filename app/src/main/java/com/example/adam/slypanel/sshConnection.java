@@ -22,6 +22,12 @@ public class sshConnection extends Activity{
     //Get the second line of this for true cpu percentage
     //Takes about 3-4 seconds to get it so refresh at ~5 seconds
 
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(R.layout.activity_main);
+    }
+
     EditText commandBox = (EditText) findViewById(R.id.commandBox);
     EditText usernameBox = (EditText) findViewById(R.id.usernameBox);
     EditText passwordBox = (EditText) findViewById(R.id.passwordBox);
