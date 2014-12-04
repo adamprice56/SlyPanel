@@ -10,6 +10,7 @@
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
     <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -37,25 +38,27 @@
         android:layout_gravity="start"
         android:name="com.example.adam.slypanel.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.example.adam.slypanel.ServerStatusFragment"
-        tools:layout="@layout/fragment_server_status"
-        />
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.example.adam.slypanel.SSHFragment"
-        tools:layout="@layout/fragment_ssh"
-        />
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="com.example.adam.slypanel.ServerStatusFragment"-->
+        <!--tools:layout="@layout/fragment_server_status"-->
+        <!--/>-->
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.example.adam.slypanel.TestingFragment"
-        tools:layout="@layout/testing_ssh"
-        />
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="com.example.adam.slypanel.SSHFragment"-->
+        <!--tools:layout="@layout/fragment_ssh"-->
+        <!--/>-->
+
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="com.example.adam.slypanel.TestingFragment"-->
+        <!--tools:layout="@layout/testing_ssh"-->
+        <!--android:id="@+id/testing_ssh_layout"-->
+        <!--/>-->
 
 </android.support.v4.widget.DrawerLayout>

@@ -26,28 +26,4 @@ public class TestingFragment extends Fragment {
         return (TestingView);
     }
 
-    sshConnection sshConnect = new sshConnection();
-
-    public void onButtonPressed(View v) {
-        Boolean connected = false;
-        if (v.getId() == R.id.sendSettingsButton) {
-            sshConnect.getSettings();
-        }
-
-        if (v.getId() == R.id.connectToHostButton) {
-            sshConnect.sshSession.run();
-            connected = true;
-            sshConnect.statusBarText.setText("Connected, Ready to send commands");
-        }
-
-        if (v.getId() == R.id.sendCommandButton) {
-            if (connected = true) {
-                sshConnect.sendCommand();
-                sshConnect.statusBarText.setText("Command sent");
-            } else {
-                sshConnect.statusBarText.setText("You must connect first!");
-            }
-        }
-
-    }
 }

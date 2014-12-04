@@ -27,12 +27,6 @@ public class sshConnection extends Activity {
         super.setContentView(R.layout.activity_main);
     }
 
-    EditText commandBox = (EditText) findViewById(R.id.commandBox);
-    EditText usernameBox = (EditText) findViewById(R.id.usernameBox);
-    EditText passwordBox = (EditText) findViewById(R.id.passwordBox);
-    EditText ipAddressBox = (EditText) findViewById(R.id.ipAddressBox);
-    TextView statusBarText = (TextView) findViewById(R.id.statusBarText);
-
     String username;
     String password;
     String host;
@@ -110,20 +104,20 @@ public class sshConnection extends Activity {
 
     void getSettings() {
 
-        username = usernameBox.toString();
-        password = passwordBox.toString();
-        host = ipAddressBox.toString();
-        statusBarText.setText("Ready to connect to: " + host);
+        username = MainActivity.usernameBox.toString();
+        password = MainActivity.passwordBox.toString();
+        host = MainActivity.ipAddressBox.toString();
+        MainActivity.statusBarText.setText("Ready to connect to: " + host);
 
     }
 
     void sendCommand() {
         sshConnection sshConnect = new sshConnection();
 
-        sshConnect.command = commandBox.toString();
-        statusBarText.setText("Command ready to be sent to: " + host);
+        sshConnect.command = MainActivity.commandBox.toString();
+        MainActivity.statusBarText.setText("Command ready to be sent to: " + host);
         sshConnect.sshCommand.start();
-        statusBarText.setText("\"" + command + "\"" + "was sent to " + host);
+        MainActivity.statusBarText.setText("\"" + command + "\"" + "was sent to " + host);
 
     }
 

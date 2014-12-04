@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jcraft.jsch.Channel;
@@ -50,6 +51,13 @@ public class MainActivity extends Activity
     private int selectedOption;
 
     refreshFragments refresh = new refreshFragments();
+    sshConnection sshConnect = new sshConnection();
+
+    public static EditText commandBox;
+    public static EditText usernameBox;
+    public static EditText passwordBox;
+    public static EditText ipAddressBox;
+    public static TextView statusBarText;
 
 
     @Override
@@ -105,7 +113,7 @@ public class MainActivity extends Activity
 //                scheduleExecutor.shutdown();
                 break;
             case 4:
-                mTitle = "Testing";
+                mTitle = getString(R.string.title_section4);
                 selectedOption = 4;
                 Log.w("Status", "Someone is tinkering...");
                 break;
@@ -135,13 +143,14 @@ public class MainActivity extends Activity
     }
 
     public void restoreActionBar() {
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-//        actionBar.setDisplayShowTitleEnabled(true);
-//        actionBar.setTitle(mTitle);
-
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        setContentView(R.layout.fragment_main);
         ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
+
+//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+//        setContentView(R.layout.activity_main);
+
 
     }
 
@@ -203,10 +212,23 @@ public class MainActivity extends Activity
         public PlaceholderFragment() {
         }
 
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            commandBox = (EditText) rootView.findViewById(R.id.commandBox);
+
+            usernameBox = (EditText) rootView.findViewById(R.id.usernameBox);
+
+            passwordBox = (EditText) rootView.findViewById(R.id.passwordBox);
+
+            ipAddressBox = (EditText) rootView.findViewById(R.id.ipAddressBox);
+
+            statusBarText = (TextView) rootView.findViewById(R.id.statusBarText);
+
 
             return rootView;
         }
@@ -219,14 +241,27 @@ public class MainActivity extends Activity
         }
     }
 
-    EditText commandBox = (EditText) findViewById(R.id.commandBox);
-    EditText usernameBox = (EditText) findViewById(R.id.usernameBox);
-    EditText passwordBox = (EditText) findViewById(R.id.passwordBox);
-    EditText ipAddressBox = (EditText) findViewById(R.id.ipAddressBox);
-    TextView statusBarText = (TextView) findViewById(R.id.statusBarText);
+    public void onButtonPressed(View v) {
+        Boolean connected = false;
+        if (v.getId() == R.id.sendSettingsButton) {
+            sshConnect.getSettings();
+        }
 
+        if (v.getId() == R.id.connectToHostButton) {
+            sshConnect.sshSession.run();
+            connected = true;
+            statusBarText.setText("Connected, Ready to send commands");
+        }
 
-
-
+        if (v.getId() == R.id.sendCommandButton) {
+            if (connected = true) {
+                sshConnect.sendCommand();
+                statusBarText.setText("Command sent");
+            } else {
+                statusBarText.setText("You must connect first!");
+            }
+        }
+    }
 
 }
+

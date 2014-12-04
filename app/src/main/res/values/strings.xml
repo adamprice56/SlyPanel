@@ -5,6 +5,7 @@
     <string name="title_section1">Server Status</string>
     <string name="title_section2">SSH</string>
     <string name="title_section3">Settings</string>
+    <string name="title_section4">Testing</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Refresh</string>
