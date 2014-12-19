@@ -20,22 +20,22 @@ public class sshConnection extends Activity {
     //SSH Command for cpu percentage top -b -n2 | grep "Cpu(s)" | awk '{print $2 + $4}'
     //Get the second line of this for true cpu percentage
     //Takes about 3-4 seconds to get it so refresh at ~5 seconds
+    static String sshUsername = "nullUsername";
+    static String sshPassword = "nullPassword";
+    static String sshHost = "127.0.0.1";
+    static int port = 22;
 
 
     @Override
     public void setContentView(int layoutResID) {
-        super.setContentView(R.layout.activity_main);
+        super.setContentView(R.layout.fragment_main);
     }
-
-    String username;
-    String password;
-    String host;
-    int port = 22;
 
     Session sshSession;
     String statusMessage;
     boolean isConnected;
-    String command = " ";
+    String sshSendCommand = "fakecommand";
+
 
     Thread sshManager = new Thread(new Runnable() {
         JSch sshManager = new JSch();
@@ -44,20 +44,23 @@ public class sshConnection extends Activity {
         public void run() {
 
             try {
+                if (sshUsername == "nullUsername") {
+                    Log.w("Minor", "No host has been set");
+                }
+                sshSession = sshManager.getSession(sshUsername, sshHost, port);
+                sshSession.setPassword(sshPassword);
 
-                sshSession = sshManager.getSession(username, host, port);
-                sshSession.setPassword(password);
-
+                Log.w("Warn", "Host key checking is DISABLED");
                 sshSession.setConfig("StrictHostKeyChecking", "no");
 
                 sshSession.connect(600);
 
                 Log.w("Status", "I should be connected now!");
                 isConnected = true;
-                statusMessage = "Connected";
+                statusMessage = "Trying to connect";
                 Log.w("ssh", statusMessage);
-                Log.w("ssh", "Attempting to connect");
-//                    sshCommand.start();
+                Log.w("ssh", "Hey server! I wanna connect!");
+                sendCommand();
 
             } catch (JSchException jschX) {
                 Log.w("Error", "It borked :(");
@@ -73,25 +76,31 @@ public class sshConnection extends Activity {
     Thread sshCommand = new Thread(new Runnable() {
         @Override
         public void run() {
-            try {
-                Channel sshChannel = sshSession.openChannel("exec");
+             try {
+                 if (sshSession == null) {
+                        sshManager.run();
+                        Log.w("Error", "sshSession returned null - Retrying config");
+
+                    } else {
+                        Channel sshChannel = sshSession.openChannel("exec");
 //                    ((ChannelExec) sshChannel).setCommand("echo lel | wall;");
-                if (command == " ") {
+                        if (sshSendCommand == "fakecommand") {
 
-                    command = "echo There was no command | wall";
-                    statusMessage = "There was no command!";
-                }
-                ChannelExec cExec = (ChannelExec) sshChannel;
-                cExec.setCommand(command);
-                cExec.connect();
-                Log.w("Status", "Command was sent... Hopefully");
-                isConnected = true;
+                            sshSendCommand = "echo There was no command | wall";
+                            statusMessage = "There was no command!";
+                        }
+                        ChannelExec cExec = (ChannelExec) sshChannel;
+                        cExec.setCommand(sshSendCommand);
+                        cExec.connect();
+                        Log.w("Status", "Command was sent... Hopefully");
+                        isConnected = true;
 
 
+                        // Disconnect from session after sending the command?
+//                        cExec.disconnect();
+//                        sshSession.disconnect();
+                    }
 
-                // Disconnect from session after sending the command?
-                cExec.disconnect();
-                sshSession.disconnect();
             } catch (JSchException jschX) {
                 Log.w("Error", "Couldn't create the channel");
                 statusMessage = "Channel creation failed";
@@ -100,24 +109,12 @@ public class sshConnection extends Activity {
     });
 
 
-
-
-    void getSettings() {
-
-        username = MainActivity.usernameBox.toString();
-        password = MainActivity.passwordBox.toString();
-        host = MainActivity.ipAddressBox.toString();
-        MainActivity.statusBarText.setText("Ready to connect to: " + host);
-
-    }
-
     void sendCommand() {
-        sshConnection sshConnect = new sshConnection();
 
-        sshConnect.command = MainActivity.commandBox.toString();
-        MainActivity.statusBarText.setText("Command ready to be sent to: " + host);
-        sshConnect.sshCommand.start();
-        MainActivity.statusBarText.setText("\"" + command + "\"" + "was sent to " + host);
+        sshSendCommand = MainActivity.commandBox.toString();
+        MainActivity.statusBarText.setText("Command ready to be sent to: " + sshHost);
+        sshCommand.start();
+        MainActivity.statusBarText.setText("\"" + sshSendCommand + "\"" + "was sent to " + sshHost);
 
     }
 

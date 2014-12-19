@@ -18,7 +18,7 @@
         <!--android:layout_height="match_parent"-->
         <!--android:name="com.example.adam.slypanel.TestingFragment"-->
         <!--tools:layout="@layout/testing_ssh"-->
-        <!--android:id="@+id/testing_ssh_layout"-->
+        <!--android:id="@+id/testing_ssh"-->
         <!--/>-->
 
 </RelativeLayout>

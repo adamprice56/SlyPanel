@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,27 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Window;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelShell;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -51,14 +31,17 @@ public class MainActivity extends Activity
     private int selectedOption;
 
     refreshFragments refresh = new refreshFragments();
-    sshConnection sshConnect = new sshConnection();
+    public sshConnection sshConnect = new sshConnection();
 
     public static EditText commandBox;
     public static EditText usernameBox;
     public static EditText passwordBox;
     public static EditText ipAddressBox;
     public static TextView statusBarText;
-
+    public static String username = "";
+    public static String password = "";
+    public static String host = "127.0.0.1";
+    boolean connected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,17 +202,6 @@ public class MainActivity extends Activity
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-            commandBox = (EditText) rootView.findViewById(R.id.commandBox);
-
-            usernameBox = (EditText) rootView.findViewById(R.id.usernameBox);
-
-            passwordBox = (EditText) rootView.findViewById(R.id.passwordBox);
-
-            ipAddressBox = (EditText) rootView.findViewById(R.id.ipAddressBox);
-
-            statusBarText = (TextView) rootView.findViewById(R.id.statusBarText);
-
-
             return rootView;
         }
 
@@ -241,26 +213,52 @@ public class MainActivity extends Activity
         }
     }
 
-    public void onButtonPressed(View v) {
-        Boolean connected = false;
+    public void onButtonPress(View v) {
+        connected = false;
         if (v.getId() == R.id.sendSettingsButton) {
-            sshConnect.getSettings();
+            getSettings();
+            Log.w("Status", "Send settings Button pressed");
         }
 
         if (v.getId() == R.id.connectToHostButton) {
-            sshConnect.sshSession.run();
-            connected = true;
-            statusBarText.setText("Connected, Ready to send commands");
+            if (usernameBox.getText().toString().isEmpty()) {
+                Log.w("Error", "No SSH details supplied");
+                statusBarText.append("Please set the connection details");
+            }
+            else {
+                Thread startConnection = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.w("Status", "Connect button pressed");
+                        sshConnect.sshManager.run();
+                        statusBarText.append("Connected, Ready to send commands");
+                        Log.w("Status", "Trying to connect");
+                        connected = true;
+                    }
+                });
+            }
+
         }
 
+
         if (v.getId() == R.id.sendCommandButton) {
+            Log.w("Status", "I heard a send command button was pressed");
             if (connected = true) {
                 sshConnect.sendCommand();
-                statusBarText.setText("Command sent");
+                statusBarText.append("Command sent");
             } else {
-                statusBarText.setText("You must connect first!");
+                statusBarText.append("You must connect first!");
             }
         }
+    }
+
+    void getSettings() {
+
+        sshConnect.sshUsername = usernameBox.getText().toString();
+        sshConnect.sshPassword = passwordBox.getText().toString();
+        sshConnect.sshHost = ipAddressBox.getText().toString();
+        statusBarText.append("Ready to connect to: " + sshConnect.sshHost);
+
     }
 
 }
