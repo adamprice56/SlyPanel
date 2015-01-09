@@ -24,6 +24,7 @@ public class sshConnection extends Activity {
     static String sshPassword = "nullPassword";
     static String sshHost = "not.an.ip.address";
     static int port = 22;
+    static String sshSendCommand = "fakecommand";
 
 
     @Override
@@ -34,7 +35,6 @@ public class sshConnection extends Activity {
     static Session sshSession ;
     String statusMessage;
     boolean isConnected;
-    String sshSendCommand = "fakecommand";
     JSch jschManager = new JSch();
 
 
@@ -107,6 +107,8 @@ public class sshConnection extends Activity {
         }
         catch (java.lang.IllegalThreadStateException Exception) {
             sshManager.interrupt();
+            sshManager = new sshConnection().sshManager;
+            sshManager.start();
             Log.w("Exception", "Output: " + Exception);
         }
 
