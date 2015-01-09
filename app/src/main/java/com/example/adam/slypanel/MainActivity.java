@@ -14,7 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.os.Handler;
+
+
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -30,7 +34,6 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
     private int selectedOption;
 
-    refreshFragments refresh = new refreshFragments();
     public sshConnection sshConnect = new sshConnection();
 
     public static EditText commandBox;
@@ -41,7 +44,10 @@ public class MainActivity extends Activity
     public static String username = "";
     public static String password = "";
     public static String host = "127.0.0.1";
-    boolean connected = false;
+    public static boolean connected = false;
+    public static boolean disconnect = false;
+    public static boolean allowRefresh = true;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,20 @@ public class MainActivity extends Activity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
     }
+
+    private Runnable refreshTimer = new Runnable() {
+        @Override
+        public void run() {
+      /* do what you need to do */
+            if (allowRefresh == true) {
+//                cpuPercentage.setProgress(ServerStatusFragment.randInt(0, 100));
+//                ramPercentage.setProgress(ServerStatusFragment.randInt(0, 100));
+//                tempValue.setProgress(ServerStatusFragment.randInt(20, 100));
+            }
+      /* and here comes the "trick" */
+            handler.postDelayed(this, 5000);
+        }
+    };
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -81,24 +101,26 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_section1);
                 selectedOption = 1;
                 Log.w("Status", "Y'arr you be openin the server status");
-//                scheduleExecutor.execute(refreshFragments);
+                refreshTimer.run();
+                allowRefresh = false;
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
                 selectedOption = 2;
                 Log.w("Status", "SSH be vewwy vewwy quiet");
-//                scheduleExecutor.shutdown();
+                allowRefresh = false;
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
                 selectedOption = 3;
                 Log.w("Status", "TOOLS? Who wants to edit this stuff? It's perfect... right?");
-//                scheduleExecutor.shutdown();
+                allowRefresh = false;
                 break;
             case 4:
                 mTitle = getString(R.string.title_section4);
                 selectedOption = 4;
                 Log.w("Status", "Someone is tinkering...");
+                allowRefresh = false;
                 break;
         }
 
@@ -158,7 +180,6 @@ public class MainActivity extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_example) {
-            refresh.refreshView.start();
             Log.w("Status", "*Sprays Fabreeze* - Good as new!");
             return true;
         } else if (id == R.id.action_settings) {
@@ -201,7 +222,9 @@ public class MainActivity extends Activity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+            ProgressBar cpuPercentage = (ProgressBar) rootView.findViewById(R.id.cpuUsageBar);
+            ProgressBar ramPercentage = (ProgressBar) rootView.findViewById(R.id.ramUsageBar);
+            ProgressBar tempValue = (ProgressBar) rootView.findViewById(R.id.tempBar);
             return rootView;
         }
 
@@ -226,20 +249,34 @@ public class MainActivity extends Activity
                 statusBarText.append("Please set the connection details");
             }
             else {
-                Thread startConnection = new Thread(new Runnable() {
+                final Thread startConnection = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Log.w("Status", "Connect button pressed");
-                        sshConnect.sshManager.run();
-                        statusBarText.append("Connected, Ready to send commands");
-                        Log.w("Status", "Trying to connect");
-                        connected = true;
+                        if (sshConnect.sshManager.isAlive()) {
+                            sshConnect.sshManager.start();
+                            Log.w("Status", "sshManager is already running");
+                        }
                     }
+
                 });
+
+                Log.w("Status", "Host: " + sshConnection.sshHost +
+                        " Username: " + sshConnection.sshUsername +
+                        " Command: " + sshConnect.sshSendCommand
+                );
+
+                try {
+                    startConnection.start();
+                }
+                catch (IllegalThreadStateException Exception) {
+                    Log.w("Exception", "Output: " + Exception);
+                    statusBarText.clearComposingText();
+                    statusBarText.append("You may only connect once!");
+                }
             }
 
         }
-
 
         if (v.getId() == R.id.sendCommandButton) {
             Log.w("Status", "I heard a send command button was pressed");
@@ -257,7 +294,9 @@ public class MainActivity extends Activity
         sshConnect.sshUsername = usernameBox.getText().toString();
         sshConnect.sshPassword = passwordBox.getText().toString();
         sshConnect.sshHost = ipAddressBox.getText().toString();
-        statusBarText.append("Ready to connect to: " + sshConnect.sshHost);
+        sshConnect.sshSendCommand = commandBox.getText().toString();
+
+        statusBarText.setText("Ready to connect to: " + sshConnect.sshHost);
 
     }
 
