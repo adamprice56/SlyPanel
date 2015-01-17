@@ -16,9 +16,11 @@
     <!--<fragment-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
-        <!--android:name="com.example.adam.slypanel.TestingFragment"-->
+        <!--android:name="com.lonedev.slypanel.TestingFragment"-->
         <!--tools:layout="@layout/testing_ssh"-->
         <!--android:id="@+id/testing_ssh"-->
         <!--/>-->
+
+
 
 </RelativeLayout>

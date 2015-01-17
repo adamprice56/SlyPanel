@@ -1,4 +1,4 @@
-package com.example.adam.slypanel;
+package com.lonedev.slypanel;
 
 
 import android.app.Fragment;

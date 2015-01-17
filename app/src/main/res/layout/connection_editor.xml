@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <EditText
+        android:id="@+id/hostDialog"
+        android:inputType="textUri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:hint="192.168.0.10" />
+    <EditText
+        android:id="@+id/usernameDialog"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="Username"/>
+    <EditText
+        android:id="@+id/passwordDialog"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="Password"/>
+
+    <EditText
+        android:id="@+id/sshKeyDialog"
+        android:inputType="textMultiLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="ssh-rsa encrypted stuff"/>
+<RadioGroup
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <RadioButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:text="Password Only"
+        android:checked="true"
+        android:id="@+id/passwordOnlyRadio"
+        />
+
+    <RadioButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:text="SSH Key Only"
+        android:checked="false"
+        android:id="@+id/sshKeyOnlyRadio"
+        />
+
+    <RadioButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:text="SSH Key &amp; Password"
+        android:checked="false"
+        android:id="@+id/sshKeyPasswordRadio"
+        />
+</RadioGroup>
+
+
+</LinearLayout>

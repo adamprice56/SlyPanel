@@ -1,24 +1,28 @@
-package com.example.adam.slypanel;
-
-import android.app.Activity;
+package com.lonedev.slypanel;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.BaseColumns;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.os.Handler;
-
-
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -34,7 +38,13 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
     private int selectedOption;
 
+    //Instances of things
     public sshConnection sshConnect = new sshConnection();
+    FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(getBaseContext());
+    public ConnectionFragment connFrag = new ConnectionFragment();
+    public sshKeyInsert sshKeyInsert = new sshKeyInsert();
+    public ServerStatusFragment serverStatus = new ServerStatusFragment();
+
 
     public static EditText commandBox;
     public static EditText usernameBox;
@@ -49,10 +59,18 @@ public class MainActivity extends Activity
     public static boolean allowRefresh = true;
     private Handler handler = new Handler();
 
+    public static String commandToSend;
+
+    public static String storedUsername;
+    public static String storedPassword;
+    public static String storedHost;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -69,14 +87,18 @@ public class MainActivity extends Activity
     private Runnable refreshTimer = new Runnable() {
         @Override
         public void run() {
-      /* do what you need to do */
-            if (allowRefresh == true) {
-//                cpuPercentage.setProgress(ServerStatusFragment.randInt(0, 100));
-//                ramPercentage.setProgress(ServerStatusFragment.randInt(0, 100));
-//                tempValue.setProgress(ServerStatusFragment.randInt(20, 100));
+
+            if (allowRefresh) {
+                if (ServerStatusFragment.cpuPercentage != null) {
+                    ServerStatusFragment.refresh();
+                    Log.w("Status", "Refreshed");
+                }
+                else {
+                    Log.w("Error", "It exploded");
+                }
             }
-      /* and here comes the "trick" */
-            handler.postDelayed(this, 5000);
+
+            handler.postDelayed(this, 3000);
         }
     };
 
@@ -93,34 +115,35 @@ public class MainActivity extends Activity
 
     public void onSectionAttached(int number) {
 
-//        scheduleExecutor.scheduleAtFixedRate(refreshFragments, 5 , 5, TimeUnit.SECONDS);
-        Log.w("Status", "Timer initiated");
-
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
                 selectedOption = 1;
                 Log.w("Status", "Y'arr you be openin the server status");
+                allowRefresh = true;
+                sshConnection.testing = false;
                 refreshTimer.run();
-                allowRefresh = false;
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
                 selectedOption = 2;
                 Log.w("Status", "SSH be vewwy vewwy quiet");
                 allowRefresh = false;
+                sshConnection.testing = false;
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
                 selectedOption = 3;
                 Log.w("Status", "TOOLS? Who wants to edit this stuff? It's perfect... right?");
                 allowRefresh = false;
+                sshConnection.testing = false;
                 break;
             case 4:
                 mTitle = getString(R.string.title_section4);
                 selectedOption = 4;
                 Log.w("Status", "Someone is tinkering...");
                 allowRefresh = false;
+                sshConnection.testing = true;
                 break;
         }
 
@@ -180,15 +203,50 @@ public class MainActivity extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_example) {
-            Log.w("Status", "*Sprays Fabreeze* - Good as new!");
+            connFrag.show(getFragmentManager(), "ConnectionEditor");
             return true;
         } else if (id == R.id.action_settings) {
             //Settings menu goes here
-            return true;
+            return super.onOptionsItemSelected(item);
+
+        }
+
+            switch (item.getItemId()) {
+                case R.id.cpuGraphEnable:
+                    if (item.isChecked()) {
+                        serverStatus.setVisibility("cpu", false);
+                    }
+                    else {
+                        serverStatus.setVisibility("cpu", true);
+                        return true;
+                    }
+                case R.id.ramGraphEnable:
+                    if (item.isChecked()) {
+                        serverStatus.setVisibility("ram", false);
+                    }
+                    else {
+                        serverStatus.setVisibility("ram", true);
+                        return true;
+                    }
+                case R.id.tempGraphEnable:
+                    if (item.isChecked()) {
+                        serverStatus.setVisibility("temp", false);
+                    }
+                    else {
+                        serverStatus.setVisibility("temp", true);
+                        return true;
+                    }
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
         }
 
 
-        return super.onOptionsItemSelected(item);
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.settings, popup.getMenu());
+        popup.show();
     }
 
     /**
@@ -222,9 +280,6 @@ public class MainActivity extends Activity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            ProgressBar cpuPercentage = (ProgressBar) rootView.findViewById(R.id.cpuUsageBar);
-            ProgressBar ramPercentage = (ProgressBar) rootView.findViewById(R.id.ramUsageBar);
-            ProgressBar tempValue = (ProgressBar) rootView.findViewById(R.id.tempBar);
             return rootView;
         }
 
@@ -247,8 +302,7 @@ public class MainActivity extends Activity
             if (usernameBox.getText().toString().isEmpty()) {
                 Log.w("Error", "No SSH details supplied");
                 statusBarText.append("Please set the connection details");
-            }
-            else {
+            } else {
                 final Thread startConnection = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -262,14 +316,13 @@ public class MainActivity extends Activity
                 });
 
                 Log.w("Status", "Host: " + sshConnection.sshHost +
-                        " Username: " + sshConnection.sshUsername +
-                        " Command: " + sshConnect.sshSendCommand
+                                " Username: " + sshConnection.sshUsername +
+                                " Command: " + sshConnect.sshSendCommand
                 );
 
                 try {
                     startConnection.start();
-                }
-                catch (IllegalThreadStateException Exception) {
+                } catch (IllegalThreadStateException Exception) {
                     Log.w("Exception", "Output: " + Exception);
                     statusBarText.clearComposingText();
                     statusBarText.append("You may only connect once!");
@@ -281,22 +334,93 @@ public class MainActivity extends Activity
         if (v.getId() == R.id.sendCommandButton) {
             Log.w("Status", "I heard a send command button was pressed");
             if (connected = true) {
-                sshConnect.sendCommand();
+                sshConnect.sendCommand(sshConnection.sshSendCommand);
                 statusBarText.append("Command sent");
             } else {
                 statusBarText.append("You must connect first!");
             }
         }
+
+        if (v.getId() == R.id.saveButton) {
+            //Save connection details
+            storedUsername = usernameBox.getText().toString();
+            storedPassword = passwordBox.getText().toString();
+            storedHost = ipAddressBox.getText().toString();
+
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(DatabaseManager.FeedEntry.USERNAME, storedUsername);
+            values.put(DatabaseManager.FeedEntry.PASSWORD, storedPassword);
+            values.put(DatabaseManager.FeedEntry.HOST, storedHost);
+
+            long newRowId;
+            newRowId = db.insert(
+                    DatabaseManager.FeedEntry.CONNECTION_DETAILS,
+                    DatabaseManager.FeedEntry.NULLABLE,
+                    values);
+
+            statusBarText.setText("Saved to database");
+        }
+
+        if (v.getId() == R.id.loadButton) {
+            //Load connection details
+
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            String[] projection = {
+                    DatabaseManager.FeedEntry._ID,
+                    DatabaseManager.FeedEntry.HOST,
+                    DatabaseManager.FeedEntry.USERNAME,
+                    DatabaseManager.FeedEntry.PASSWORD,
+            };
+
+
+            Cursor c = db.query(
+                    DatabaseManager.FeedEntry.CONNECTION_DETAILS,  // The table to query
+                    projection,                                    // The columns to return
+                    null,                                          // The columns for the WHERE clause
+                    null,                                          // The values for the WHERE clause
+                    null,                                          // don't group the rows
+                    null,                                          // don't filter by row groups
+                    null                                           // The sort order
+            );
+
+            c.moveToFirst();
+            long itemId = c.getLong(
+                    c.getColumnIndexOrThrow(DatabaseManager.FeedEntry._ID)
+            );
+        }
+
+        if (v.getId() == R.id.sshKeyButton) {
+            sshKeyInsert.show(getFragmentManager(), "sshKeyInsert");
+        }
+        if (v.getId() == R.id.passwordOnlyRadio) {
+            Log.w("Button", "Password only selected");
+            findViewById(R.id.sshKeyDialog).setFocusableInTouchMode(false);
+        }
+
+        if (v.getId() == R.id.sshKeyOnlyRadio) {
+            Log.w("Button", "SSH Key only selected");
+            findViewById(R.id.sshKeyDialog).setFocusableInTouchMode(true);
+            findViewById(R.id.passwordDialog).setFocusableInTouchMode(false);
+        }
+
+        if (v.getId() == R.id.sshKeyPasswordRadio) {
+            Log.w("Button", "SSH Key & Password");
+            findViewById(R.id.sshKeyDialog).setFocusableInTouchMode(true);
+            findViewById(R.id.passwordDialog).setFocusableInTouchMode(true);
+        }
     }
+
 
     void getSettings() {
 
-        sshConnect.sshUsername = usernameBox.getText().toString();
-        sshConnect.sshPassword = passwordBox.getText().toString();
-        sshConnect.sshHost = ipAddressBox.getText().toString();
-        sshConnect.sshSendCommand = commandBox.getText().toString();
+        sshConnection.sshUsername = usernameBox.getText().toString();
+        sshConnection.sshPassword = passwordBox.getText().toString();
+        sshConnection.sshHost = ipAddressBox.getText().toString();
+        sshConnection.sshSendCommand = commandBox.getText().toString();
 
-        statusBarText.setText("Ready to connect to: " + sshConnect.sshHost);
+        statusBarText.setText("Ready to connect to: " + sshConnection.sshHost);
 
     }
 

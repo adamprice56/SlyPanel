@@ -1,4 +1,4 @@
-package com.example.adam.slypanel;
+package com.lonedev.slypanel;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,17 +10,18 @@ import android.view.ViewGroup;
 /**
  * Created by root on 02/10/14.
  */
-public class CreateConnection extends Fragment {
+public class SSHFragment extends Fragment {
 
-    public CreateConnection() {
+    public SSHFragment() {
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View connectionView = inflater.inflate(R.layout.fragment_create_connection, container, false);
+        View SSHView = inflater.inflate(R.layout.fragment_ssh, container, false);
 
-        return (connectionView);
+        return (SSHView);
     }
 }

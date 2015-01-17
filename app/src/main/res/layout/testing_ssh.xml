@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/testing_ssh_layout">
 
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -146,6 +147,39 @@
         android:layout_alignStart="@+id/commandLabel"
         android:layout_toLeftOf="@+id/passwordBox"
         android:layout_toStartOf="@+id/passwordBox"
+        android:onClick="onButtonPress"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/saveButton"
+        android:layout_above="@+id/statusBarText"
+        android:layout_alignLeft="@+id/connectToHostButton"
+        android:layout_alignStart="@+id/connectToHostButton"
+        android:onClick="onButtonPress"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load"
+        android:id="@+id/loadButton"
+        android:layout_alignTop="@+id/saveButton"
+        android:layout_toRightOf="@+id/saveButton"
+        android:layout_toEndOf="@+id/saveButton"
+        android:onClick="onButtonPress"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SSH Key"
+        android:id="@+id/sshKeyButton"
+        android:layout_above="@+id/statusBarText"
+        android:layout_toRightOf="@+id/loadButton"
+        android:layout_toEndOf="@+id/loadButton"
         android:onClick="onButtonPress"
         />
 
