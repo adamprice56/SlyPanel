@@ -24,8 +24,12 @@ Current status: (Updated 17/01/2015)
   - Graphs have finally been added and are working as intended (For now the data is random as a place holder for the SSH response implementation)
 
 Screenshots
+===========
+
+![alt tag](http://i.imgur.com/tOztGxV.png)
+ - Main server status view - 
 
 ![alt tag](http://i.imgur.com/s9t0N2E.png)
-![alt tag](http://i.imgur.com/tOztGxV.png)
+ - Connection editor dialog - 
 
 
