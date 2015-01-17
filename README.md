@@ -22,3 +22,10 @@ Current status: (Updated 17/01/2015)
   - SSH works fine and has been tested with a DigitalOcean Droplet, Output checking will be set up soon
   - Hoping to add a splash of Material design and maybe some snazzy animations! :D
   - Graphs have finally been added and are working as intended (For now the data is random as a place holder for the SSH response implementation)
+
+Screenshots
+
+![alt tag](http://i.imgur.com/s9t0N2E.png)
+![alt tag](http://i.imgur.com/tOztGxV.png)
+
+
