@@ -1,8 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
+<<<<<<< HEAD
     <style name="AppTheme" parent="android:Theme.Holo">
         <!-- Customize your theme here. -->
+=======
+    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light">
+        <!-- customize the color palette -->
+        <item name="colorPrimary">@color/material_blue_grey_800</item>
+        <item name="colorPrimaryDark">@color/material_deep_teal_200</item>
+        <item name="colorAccent">@color/material_blue_grey_950</item>
+>>>>>>> origin/Alpha-0.6
     </style>
 
 </resources>

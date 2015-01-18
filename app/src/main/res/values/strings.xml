@@ -5,9 +5,16 @@
     <string name="title_section1">Server Status</string>
     <string name="title_section2">SSH</string>
     <string name="title_section3">Settings</string>
+<<<<<<< HEAD
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Refresh</string>
+=======
+    <string name="title_section4">Testing</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Connect</string>
+>>>>>>> origin/Alpha-0.6
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

@@ -10,6 +10,10 @@
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
     <FrameLayout
+<<<<<<< HEAD
+=======
+        xmlns:android="http://schemas.android.com/apk/res/android"
+>>>>>>> origin/Alpha-0.6
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -21,6 +25,7 @@
          android:layout_gravity="left" instead. -->
     <!-- The drawer is given a fixed width in dp and extends the full height of
          the container. -->
+<<<<<<< HEAD
    <!--
     <fragment
         android:layout_width="fill_parent"
@@ -30,12 +35,30 @@
         tools:layout="@layout/fragment_create_connection"
         />
             -->
+=======
+
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="com.lonedev.slypanel.ServerStatusFragment"-->
+        <!--tools:layout="@layout/fragment_server_status"-->
+        <!--/>-->
+
+>>>>>>> origin/Alpha-0.6
 
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+<<<<<<< HEAD
         android:name="adam.price.slypanel.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
+=======
+        android:name="com.lonedev.slypanel.NavigationDrawerFragment"
+        tools:layout="@layout/fragment_navigation_drawer" />
+
+
+
+>>>>>>> origin/Alpha-0.6
 </android.support.v4.widget.DrawerLayout>

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
+=======
+<ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+>>>>>>> origin/Alpha-0.6
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
@@ -6,9 +15,21 @@
     android:id="@+id/Server_Status_Fragment"
     android:weightSum="1">
 
+<<<<<<< HEAD
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+=======
+
+
+    //CPU usage
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayoutCpu"
+        android:rowCount="1"
+        android:columnCount="2">
+>>>>>>> origin/Alpha-0.6
 
         <TextView
             android:layout_width="wrap_content"
@@ -16,6 +37,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="CPU Usage: "
             android:id="@+id/cpuUsageLabel"
+<<<<<<< HEAD
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -49,10 +71,24 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="120dp"
             android:layout_height="25dp"
+=======
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_gravity="center|left"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+>>>>>>> origin/Alpha-0.6
             android:id="@+id/cpuUsageBar"
             android:max="100"
             android:progress="25"
             android:indeterminate="false"
+<<<<<<< HEAD
             android:layout_marginTop="40dp"
             android:layout_below="@+id/cpuUsageLabel"
             android:layout_alignLeft="@+id/cpuUsageLabel"
@@ -62,10 +98,53 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="120dp"
             android:layout_height="25dp"
+=======
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center" />
+    </GridLayout>
+    //End CPU Usage
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:columnCount="1"
+        android:rowCount="1"
+        >
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/cpuGraph"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    </GridLayout>
+    //RAM Usage
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayoutRam"
+        android:rowCount="1"
+        android:columnCount="2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="RAM Usage: "
+            android:id="@+id/ramUsageLabel"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_gravity="center|left"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+>>>>>>> origin/Alpha-0.6
             android:id="@+id/ramUsageBar"
             android:max="100"
             android:progress="45"
             android:indeterminate="false"
+<<<<<<< HEAD
             android:layout_toEndOf="@+id/tempBar"
             android:layout_centerVertical="true"
             android:layout_alignLeft="@+id/ramUsageLabel"
@@ -75,10 +154,56 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="120dp"
             android:layout_height="25dp"
+=======
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center" />
+    </GridLayout>
+
+    //End RAM Usage
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:columnCount="1"
+        android:rowCount="1"
+        >
+        <com.androidplot.xy.XYPlot
+            android:id="@+id/ramGraph"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </GridLayout>
+
+    //Temp Monitor
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayoutTemp"
+        android:rowCount="1"
+        android:columnCount="2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Temperature:"
+            android:id="@+id/tempLabel"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_gravity="center|left"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+>>>>>>> origin/Alpha-0.6
             android:id="@+id/tempBar"
             android:max="100"
             android:progress="60"
             android:indeterminate="false"
+<<<<<<< HEAD
             android:layout_marginTop="65dp"
             android:layout_below="@+id/tempLabel"
             android:layout_alignLeft="@+id/tempLabel"
@@ -86,3 +211,25 @@
 
     </RelativeLayout>
 </LinearLayout>
+=======
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center" />
+        </GridLayout>
+    //End Temp Monitor
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:columnCount="1"
+        android:rowCount="1"
+        >
+        <com.androidplot.xy.XYPlot
+            android:id="@+id/tempGraph"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </GridLayout>
+
+</LinearLayout>
+    </ScrollView>
+>>>>>>> origin/Alpha-0.6
