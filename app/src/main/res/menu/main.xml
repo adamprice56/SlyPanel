@@ -11,6 +11,10 @@
         android:showAsAction="never"
         android:onClick="showPopup">
 
+        <item
+            android:id="@+id/about"
+            android:title="About"/>
+
         <item android:id="@+id/graphSelector"
         android:title="Graphs" >
         <!-- "Graphs" submenu -->
@@ -31,6 +35,7 @@
                     android:checked="true"/>
             </group>
         </menu>
+
     </item>
     </item>
 </menu>
