@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/SlyPanelFragmented.iml" filepath="$PROJECT_DIR$/SlyPanelFragmented.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/SlyPanel.iml" filepath="$PROJECT_DIR$/SlyPanel.iml" />
+>>>>>>> origin/Alpha-0.6
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

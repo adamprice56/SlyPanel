@@ -160,7 +160,7 @@ public class ServerStatusFragment extends Fragment {
         tempGraph.setDomainBoundaries(0, 30, BoundaryMode.FIXED);
         tempGraph.getDomainLabelWidget().pack();
 
-        tempGraph.setRangeLabel("Usage (%)");
+        tempGraph.setRangeLabel("Temperature (Degrees)");
         tempGraph.setRangeStepValue(10);
         tempGraph.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
         tempGraph.getRangeLabelWidget().pack();

@@ -44,7 +44,7 @@ public class MainActivity extends Activity
     public ConnectionFragment connFrag = new ConnectionFragment();
     public sshKeyInsert sshKeyInsert = new sshKeyInsert();
     public ServerStatusFragment serverStatus = new ServerStatusFragment();
-
+    public AboutFragment aboutFrag = new AboutFragment();
 
     public static EditText commandBox;
     public static EditText usernameBox;
@@ -236,6 +236,8 @@ public class MainActivity extends Activity
                         serverStatus.setVisibility("temp", true);
                         return true;
                     }
+                case R.id.about:
+                    aboutFrag.show(getFragmentManager(), "About");
                 default:
                     return super.onOptionsItemSelected(item);
             }
