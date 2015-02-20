@@ -1,7 +1,10 @@
 package com.lonedev.slypanel;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -9,11 +12,8 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.regex.Pattern;
+import java.io.InputStream;
+import java.net.ConnectException;
 
 /**
  * Created by adam on 26/11/14.
@@ -28,11 +28,11 @@ public class sshConnection extends Activity {
     static String sshHost = "not.an.ip.address";
     static int port = 22;
     static String sshSendCommand = "fakecommand";
-    static boolean testing;
+    public static boolean testing = false;
 
-    BufferedReader replyFromServer;
-    Pattern alphaNumeric = Pattern.compile("([^a-zA-z0-9])");
-    public static String terminator = "zDonez";
+    static boolean updatingGraphs;
+
+    static Context context;
 
 
     @Override
@@ -42,92 +42,185 @@ public class sshConnection extends Activity {
 
     static Session sshSession ;
     String statusMessage;
-    boolean isConnected;
-    JSch jschManager = new JSch();
+    static String replyLine = null;
+    static String cpuReplyLine = null;
+    static String ramReplyLine = null;
+    static String tempReplyLine = "Blank";
+
+    FileManager fileMan;
+    MainActivity mainActivity;
+    ServerStatusFragment serverStatus;
 
 
     Thread sshManager = new Thread(new Runnable() {
+
         @Override
         public void run() {
-
             try {
                 try {
-                    String sshKeyFile = null;
-                    sshSession = jschManager.getSession(sshUsername, sshHost, port);
-                    sshSession.setPassword(sshPassword);
-                    sshSession.setConfig("StrictHostKeyChecking", "no");
-                    try {
-                        //Store SSH Key either in database or in a local key file on the device
-                        sshKeyFile = new File(getFilesDir(), "sshkey.pub").getAbsolutePath();
-                    }
-                    catch (NullPointerException Exception) {
-                        Log.w("Exception", Exception);
+                    String sshKey = null;
+                    boolean alive = true;
+                    JSch jschManager = new JSch();
+
+                    Looper.prepare();
+                    port = 22;
+
+                    if (fileMan == null) {
+                        fileMan = new FileManager();
                     }
 
-                    if (sshKeyFile != null) {
-                        jschManager.addIdentity(sshKeyFile);
-                        Log.w("Status", "SSH Public Key loaded");
+                    if (mainActivity == null) {
+                        mainActivity = new MainActivity();
                     }
-                    else {
-                        Log.w("Status", "SSH Key Failed to load");
+
+                    if (serverStatus == null) {
+                        serverStatus = new ServerStatusFragment();
                     }
-                    sshSession.connect(600);
-                    Channel sshChannel = sshSession.openChannel("exec");
-                    if (sshSendCommand == "fakecommand") {
-                        try {
-                            // Try to set the command
-                            sshSendCommand = MainActivity.commandBox.getText().toString();
-                            if (sshSendCommand == "fakecommand") ;
-                            {
-                                // If the command fails to set, Throw any exception
-                                throw new NoSuchMethodError();
-                            }
-                        } catch (NoSuchMethodError Exception) {
-                            // Send a pre set command instead
-                            Log.w("Error", "Unable to set a command");
-                            sshSendCommand = "echo There was no command | wall";
-                            statusMessage = "There was no command!";
+
+                    if (sshHost == "not.an.ip.address") {
+                        sshUsername = fileMan.loadDetails("username");
+                        sshHost = fileMan.loadDetails("host");
+
+                        if (sshHost == "not.an.ip.address") {
+                            Log.w("Error", "Failed to retrieve settings");
+                        }
+                    }
+
+                        if (sshPassword == "nullPassword") {
+                            Log.w("Error", "Failed to get password");
                         }
 
-                    } else {
-                        sshSendCommand = MainActivity.commandBox.getText().toString();
-                        Log.w("Status", "Command " + sshSendCommand + " Is ready to be sent");
+
+                    sshSession = jschManager.getSession(sshUsername, sshHost, port);
+                    Log.w("SSH", "Username: " + sshUsername + " Host: " + sshHost + " Port: " + port);
+                    sshSession.setPassword(sshPassword);
+                    sshSession.setConfig("StrictHostKeyChecking", "no");
+//                    try {
+//                        //Store SSH Key either in database or in a local key file on the device
+//                        sshKey = fileMan.loadDetails("sshKey");
+//                    }
+//                    catch (NullPointerException Exception) {
+//                        Log.w("Exception", Exception);
+//                    }
+//
+//                    if (sshKey != null) {
+//                        jschManager.addIdentity(sshKey);
+//                        Log.w("Status", "SSH Public Key loaded");
+//                    }
+//                    else {
+//                        Log.w("Status", "SSH Key Failed to load");
+//                    }
+
+
+                    if (!sshSession.isConnected()) {
+                        sshSession.connect();
                     }
-                    ChannelExec cExec = (ChannelExec) sshChannel;
-                    replyFromServer = new BufferedReader(new InputStreamReader(cExec.getInputStream()));
-//                    sshSendCommand += " && echo \"" + terminator + "\"";
-                    cExec.setCommand(sshSendCommand);
-                    cExec.connect();
-                    Log.w("Status", "Command was sent... Hopefully");
+
+
+                    String cpuCommand = "top -b -n2 | grep \"Cpu(s)\" | awk '{print $2 + $4}' | tail -1";
+                    String ramCommand = "top -bn1 | awk '/Mem/ { mem = \"\" $5 / $3 * 100 \"\" } END { print mem * 1000 }'";
+                    String tempCommand = "echo 40.0";
+
+
+                    Channel cpuChannel = sshSession.openChannel("exec");
+                    ((ChannelExec) cpuChannel).setCommand(cpuCommand);
+                    cpuChannel.setInputStream(null);
+                    ((ChannelExec) cpuChannel).setErrStream(System.err);
+                    InputStream cpuInStream = cpuChannel.getInputStream();
+
+
+                    Channel ramChannel = sshSession.openChannel("exec");
+                    ((ChannelExec) ramChannel).setCommand(ramCommand);
+                    ramChannel.setInputStream(null);
+                    ((ChannelExec) ramChannel).setErrStream(System.err);
+                    InputStream ramInStream = ramChannel.getInputStream();
+
+
+
+                    Channel tempChannel = sshSession.openChannel("exec");
+                    ((ChannelExec) tempChannel).setCommand(tempCommand);
+                    tempChannel.setInputStream(null);
+                    ((ChannelExec) tempChannel).setErrStream(System.err);
+                    InputStream tempInStream = tempChannel.getInputStream();
+
+                    while (tempReplyLine.equals("Blank")) {
+                        cpuChannel.connect();
+                        if (cpuChannel.isConnected()) {
+                            readOutput(cpuInStream, "cpu");
+                            Log.w("ssh", "CPU command read");
+                            cpuChannel.disconnect();
+                        }
+
+                        ramChannel.connect();
+                        if (ramChannel.isConnected()) {
+                            readOutput(ramInStream, "ram");
+                            ramChannel.disconnect();
+                        }
+
+                        tempChannel.connect();
+                        if (tempChannel.isConnected()) {
+                            readOutput(tempInStream, "temp");
+                            tempChannel.disconnect();
+                        }
+                    }
+
                     MainActivity.connected = true;
 
-                    if (MainActivity.disconnect == true) {
-                        // Disconnect from session after sending the command?
-                        cExec.disconnect();
-                        sshSession.disconnect();
-                        MainActivity.connected = false;
-                    }
+                    context = getApplicationContext();
 
                 } catch (JSchException jschX) {
                     Log.w("Error", "Couldn't create the channel");
-                    statusMessage = "Channel creation failed";
+                    Log.w("Status", System.err.toString());
                     Log.w("JschException", jschX);
+
+
+                    if (jschX.toString().contains("timeout")) {
+                        Log.w("Error", "IP Address is incorrect");
+                        Toast.makeText(getApplicationContext(), "Cannot connect to host, Check IP and connection.", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    if (jschX.toString().contains("Auth fail")) {
+                        Log.w("Error", "Username/Password Incorrect");
+                        Toast.makeText(getApplicationContext(), "Username/Password Incorrect", Toast.LENGTH_LONG).show();
+                    }
+                    if (jschX.toString().contains("socket")) {
+                        sshSession.disconnect();
+                    }
+                    if (jschX.toString().contains("ECONNRESET")) {
+                        Toast.makeText(getApplicationContext(), "Connection failure", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Please check your details", Toast.LENGTH_LONG).show();
+                        ConnectionFragment connFrag = new ConnectionFragment();
+                        connFrag.show(getFragmentManager(), "ConnectionFragment");
+                    }
                 }
+            }
+            catch (ConnectException Exception) {
+                Log.w("Exception", Exception);
+                Toast.makeText(getApplicationContext(), "Connection failure", Toast.LENGTH_LONG).show();
+                ConnectionFragment connFrag = new ConnectionFragment();
+                connFrag.show(getFragmentManager(), "ConnectionFragment");
             }
             catch (Exception Exception) {
 
                 Log.w("Exception", Exception);
             }
+            Looper.loop();
         }
     });
 
+    public void resetCredentials() {
+        sshUsername = "nullUsername";
+        sshPassword = "nullPassword";
+        sshHost = "not.an.ip.address";
+    }
 
-    void sendCommand(String sshSendCommand) {
-        if (testing = true) {
+    public void sendCommand(String commandToSend) {
+        if (MainActivity.commandBox != null) {
             sshSendCommand = MainActivity.commandBox.getText().toString();
         }
         else {
-            sshSendCommand = MainActivity.commandToSend;
+            sshSendCommand = commandToSend;
         }
 //        MainActivity.statusBarText.setText("Command ready to be sent to: " + sshHost);
 
@@ -135,41 +228,74 @@ public class sshConnection extends Activity {
             sshManager.start();
         }
         catch (java.lang.IllegalThreadStateException Exception) {
+            Log.w("Exception", "Output: " + Exception);
             sshManager.interrupt();
             sshManager = new sshConnection().sshManager;
             sshManager.start();
-            Log.w("Exception", "Output: " + Exception);
         }
 
-        MainActivity.statusBarText.setText("Command: " + sshSendCommand + "was sent to " + sshHost);
+        if (MainActivity.statusBarText != null) {
+            MainActivity.statusBarText.setText("Command: " + sshSendCommand + "was sent to " + sshHost);
+        }
+    }
+
+    public void setCommand(String commandToSend) {
+        if (MainActivity.commandBox != null) {
+            sshSendCommand = MainActivity.commandBox.getText().toString();
+        } else {
+            sshSendCommand = commandToSend;
+        }
+
 
     }
 
-    public String getResponse() throws IOException {
-        int count = 0;
-        String line = "";
+    public void startSsh() {
+        try {
+            sshManager.start();
+        }
+        catch (java.lang.IllegalThreadStateException Exception) {
+            Log.w("Thread", "Restarting sshManager");
 
-        StringBuilder sBuilder = new StringBuilder();
+            sshManager.interrupt();
+            sshManager = new sshConnection().sshManager;
+            sshManager.start();
 
-        for (count = 0; true; count++) {
-            line = replyFromServer.readLine();
-            sBuilder.append(line).append("\n");
+        }
 
-            if (line.contains(terminator) && (++count > 1)) {
-                break;
+    }
+
+    void readOutput(InputStream in, String channelName) {
+        byte[] tmp = new byte[1024];
+        try {
+            while (true) {
+                while (in.available() > 0) {
+                    int i = in.read(tmp, 0, 1024);
+                    if (i < 0)
+                        break;
+                    switch (channelName) {
+
+                        default:
+                            replyLine = (new String(tmp, 0, i));
+                            Log.w("Reply", replyLine);
+                            break;
+                        case "cpu":
+                            cpuReplyLine = (new String(tmp, 0, i));
+                            Log.w("Reply", cpuReplyLine);
+                            break;
+                        case "ram":
+                            ramReplyLine = (new String(tmp, 0, i));
+                            Log.w("Reply", ramReplyLine);
+                            break;
+                        case "temp":
+                            tempReplyLine = (new String(tmp, 0, i));
+                            Log.w("Reply", tempReplyLine);
+                            break;
+                    }
+
+                }
             }
+        } catch (Exception exception) {
+            Log.w("Exception", exception);
         }
-            String result = sBuilder.toString();
-
-
-            int beginIndex = result.indexOf(terminator+"\"") + ((terminator+"\"").length());
-            result = result.substring(beginIndex);
-            return result.replaceAll(escape(terminator), "").trim();
-
-
-
-    }
-    private String escape(String subjectString){
-        return alphaNumeric.matcher(subjectString).replaceAll("\\\\$1");
     }
 }

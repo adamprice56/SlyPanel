@@ -18,6 +18,9 @@
         android:text="Made by Adam Price"
         android:textSize="@dimen/abc_text_size_body_1_material"
         android:id="@+id/Text"
-        android:layout_margin="20dp" />
+        android:layout_margin="20dp"
+        android:clickable="true" />
+
+
 
 </LinearLayout>

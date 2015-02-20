@@ -12,7 +12,7 @@ public final class DatabaseManager {
     }
 
     /* Inner class that defines the table contents */
-    public abstract class FeedEntry implements BaseColumns {
+    public static class FeedEntry implements BaseColumns {
         public static final String CONNECTION_DETAILS = "Connection_Details";
         public static final String USERNAME = "Username";
         public static final String PASSWORD = "Password";

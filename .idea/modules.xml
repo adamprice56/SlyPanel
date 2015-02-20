@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SlyPanel.iml" filepath="$PROJECT_DIR$/SlyPanel.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/slypanelwear/slypanelwear.iml" filepath="$PROJECT_DIR$/slypanelwear/slypanelwear.iml" />
     </modules>
   </component>
 </project>

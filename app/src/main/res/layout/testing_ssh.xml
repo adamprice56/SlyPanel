@@ -49,8 +49,7 @@
         android:layout_toRightOf="@+id/usernameLabel"
         android:layout_alignRight="@+id/passwordBox"
         android:layout_alignEnd="@+id/passwordBox"
-        android:hint="Root"
-        android:text="root" />
+        android:hint="Root" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -61,8 +60,7 @@
         android:hint="Password"
         android:layout_above="@+id/ipAddrLabel"
         android:layout_toRightOf="@+id/passwordLabel"
-        android:layout_toEndOf="@+id/passwordLabel"
-        android:text="Yobo4927" />
+        android:layout_toEndOf="@+id/passwordLabel" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -73,8 +71,7 @@
         android:layout_alignStart="@+id/usernameBox"
         android:layout_alignRight="@+id/passwordBox"
         android:layout_alignEnd="@+id/passwordBox"
-        android:hint="111.222.333.444"
-        android:text="178.62.46.233" />
+        android:hint="111.222.333.444" />
 
     <Button
         android:layout_width="wrap_content"
